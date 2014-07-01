@@ -3,6 +3,7 @@
 build
 /bin
 .gradle
+*.class
 
 
 # Intellij IDEA
