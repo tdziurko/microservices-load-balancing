@@ -4,21 +4,15 @@ import groovy.transform.TypeChecked
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.RetryNTimes
-import org.apache.curator.x.discovery.strategies.RoundRobinStrategy
-import org.apache.curator.x.discovery.ProviderStrategy
 import org.apache.curator.x.discovery.ServiceDiscovery
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder
-import org.apache.curator.x.discovery.ServiceInstance
 import org.apache.curator.x.discovery.ServiceProvider
-import org.apache.curator.x.discovery.details.InstanceProvider
-import org.apache.curator.x.discovery.details.JsonInstanceSerializer
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer
 
 import javax.ws.rs.ApplicationPath
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.core.Application
-
 
 @TypeChecked
 @Path("/")
@@ -47,10 +41,9 @@ class Main {
                 .client(curatorFramework).build()
         serviceDiscovery.start()
         serviceProvider = serviceDiscovery
-            .serviceProviderBuilder()
-            .serviceName("worker")
-            .providerStrategy(new RoundRobinStrategy<Void>())
-            .build()
+                .serviceProviderBuilder()
+                .serviceName("worker")
+                .build()
         serviceProvider.start()
 
         println ("Manager started on port $managerPort")
