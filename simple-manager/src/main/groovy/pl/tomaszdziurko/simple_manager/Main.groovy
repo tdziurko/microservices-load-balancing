@@ -4,6 +4,7 @@ import groovy.transform.TypeChecked
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.RetryNTimes
+import org.apache.curator.x.discovery.strategies.RoundRobinStrategy
 import org.apache.curator.x.discovery.ProviderStrategy
 import org.apache.curator.x.discovery.ServiceDiscovery
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder
@@ -45,12 +46,11 @@ class Main {
                 .basePath("load-balancing-example")
                 .client(curatorFramework).build()
         serviceDiscovery.start()
-        serviceProvider = serviceDiscovery.serviceProviderBuilder().serviceName("worker").providerStrategy(new ProviderStrategy<Void>() {
-            @Override
-            ServiceInstance<Void> getInstance(InstanceProvider<Void> instanceProvider) throws Exception {
-                return null
-            }
-        }) build()
+        serviceProvider = serviceDiscovery
+            .serviceProviderBuilder()
+            .serviceName("worker")
+            .providerStrategy(new RoundRobinStrategy<Void>())
+            .build()
         serviceProvider.start()
 
         println ("Manager started on port $managerPort")
